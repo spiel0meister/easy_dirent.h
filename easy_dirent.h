@@ -14,7 +14,7 @@
 
 #ifndef EASYDIR_STRDUP
 #include <stdlib.h>
-char *strdup(const char *s); // for some reason LSP is blind
+char *strdup(const char *s); // for some reason GCC is blind
 #define EASYDIR_STRDUP strdup
 #endif // EASYDIR_STRDUP
 
@@ -59,7 +59,7 @@ bool easydir_open(EasyDirHandle* easydir, const char* path) {
 
     assert(easydir->dirs_count < DIR_STACK_SIZE);
     easydir->dirs[easydir->dirs_count].dir = dir;
-    easydir->dirs[easydir->dirs_count].path = EASYDIR_STRDUP(path);
+    easydir->dirs[easydir->dirs_count++].path = EASYDIR_STRDUP(path);
     return true;
 }
 
@@ -80,7 +80,7 @@ bool easydir_read(EasyDirHandle* self, EasyDirent* easydirent) {
             self->dirs_count--;
             EASYDIR_FREE(easydir.path);
 
-            return false;
+            continue;
         }
 
         int n = snprintf(easydirent->path, PATH_MAX, "%s/%s", easydir.path, dirent->d_name);
